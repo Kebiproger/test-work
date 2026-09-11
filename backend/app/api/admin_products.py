@@ -7,12 +7,13 @@ from app import schemas, services
 from app.deps import get_api_key
 from app.db import get_db
 
-admin_router = APIRouter(prefix="/api/v1/admin", tags=["Admin"],dependencies=[Depends(get_api_key)])
+admin_router = APIRouter(prefix="/api/v1/admin", tags=["Admin (Управление)"], dependencies=[Depends(get_api_key)])
 
 @admin_router.post(
     "/products",
     response_model=schemas.ProductPublic,
     status_code=status.HTTP_201_CREATED,
+    summary="➕ Создать новый товар с картинкой",
 )
 async def create_product_with_upload(
     name: str = Form(...),
@@ -24,6 +25,29 @@ async def create_product_with_upload(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    **Для чего эта ручка?**
+    Используется в админ-панели для добавления нового цветка или букета.
+
+    **ВАЖНО для Фронтендера:**
+    Данные нужно отправлять не как обычный JSON, а через `FormData` (Content-Type: `multipart/form-data`), потому что мы грузим картинку (`file`).
+
+    **Пример отправки из JS:**
+    ```javascript
+    const formData = new FormData();
+    formData.append('name', 'Роза');
+    formData.append('price', '1500');
+    formData.append('stock_quantity', '10');
+    formData.append('product_type', 'FLOWER');
+    formData.append('file', fileInputElement.files[0]);
+
+    fetch('/api/v1/admin/products', {
+      method: 'POST',
+      headers: { 'X-API-Key': 'твой_ключ' }, // НЕ ставьте Content-Type руками, браузер сам поставит нужный boundary!
+      body: formData
+    })
+    ```
+    """
     product_in = schemas.ProductCreate(
         name=name,
         description=description,
@@ -49,12 +73,24 @@ async def create_product_with_upload(
         ) from exc
 
 
-@admin_router.put("/products/{product_id}", response_model=schemas.ProductPublic)
+@admin_router.put(
+    "/products/{product_id}",
+    response_model=schemas.ProductPublic,
+    summary="📝 Обновить товар целиком",
+)
 async def update_product(
     product_id: int,
     product_in: schemas.ProductUpdate,
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    **Для чего эта ручка?**
+    Позволяет изменить название, цену, описание или статус активности (скрыть с витрины).
+
+    **Особенности:**
+    Здесь картинка не обновляется, отправляется обычный JSON `Content-Type: application/json`.
+    Не забудьте передать заголовок `X-API-Key`.
+    """
     product = await services.get_product(db, product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -63,11 +99,20 @@ async def update_product(
     return updated_product
 
 
-@admin_router.delete("/products/{product_id}", response_model=schemas.ProductPublic)
+@admin_router.delete(
+    "/products/{product_id}",
+    response_model=schemas.ProductPublic,
+    summary="🗑️ Удалить товар",
+)
 async def delete_product(
     product_id: int,
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    **Для чего эта ручка?**
+    Удаляет товар из базы безвозвратно. 
+    В реальности чаще используют обновление поля `is_active=false` (через PUT), но если нужно удалить — это сюда.
+    """
     product = await services.get_product(db, product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -79,12 +124,18 @@ async def delete_product(
 @admin_router.patch(
     "/products/{product_id}/stock",
     response_model=schemas.ProductPublic,
+    summary="📦 Быстрое изменение остатков",
 )
 async def update_product_stock(
     product_id: int,
     stock_in: schemas.StockUpdate,
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    **Для чего эта ручка?**
+    Когда нужно просто изменить количество товара на складе (без изменения названия или цены). 
+    Принимает JSON с одним полем: `stock_quantity`.
+    """
     product = await services.get_product(db, product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")

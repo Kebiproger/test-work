@@ -57,6 +57,9 @@ async def create_product(
     product_in: schemas.ProductCreate,
     file: UploadFile,
 ):
+    '''
+    Тестовый надпись
+    '''
     image_url = await _save_product_image(file)
     return await repositories.create_product_db(
         db=db,
@@ -70,6 +73,7 @@ async def update_product(
     db_product: models.Product,
     product_in: schemas.ProductUpdate,
 ):
+    
     return await repositories.update_product_db(db, db_product, product_in)
 
 
