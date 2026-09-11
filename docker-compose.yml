@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: flower_db
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: flower_backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - media_files:/app/media
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  pgweb:
+    image: sosedoff/pgweb
+    container_name: flower_pgweb
+    ports:
+      - "127.0.0.1:8081:8081" # Мы будем заходить на pgweb через 8081 порт
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Вот здесь мы говорим pgweb, как найти нашу БД
+      - PGWEB_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+    depends_on:
+      - db
+  
+  frontend:
+    build: ./frontend
+    container_name: flower_frontend
+    ports:
+    - "127.0.0.7:80:80"
+    volumes:
+    - media_files:/usr/share/nginx/html/media:ro
+    depends_on:
+    - backend
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  media_files:

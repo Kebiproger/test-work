@@ -1,0 +1,55 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.iml
+*~ 
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log
+.pnp/
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.fvenv/
+fvenv/
+.env
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.coverage
+htmlcov/
+
+# Build / packages / artifacts
+dist/
+build/
+*.egg-info/
+*.whl
+target/
+
+# Ruby
+.bundle
+vendor/bundle
+log/
+tmp/
+
+# Go / binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs and misc
+*.log
+coverage/
+*.tmp
