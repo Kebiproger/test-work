@@ -1,1 +1,13 @@
-your work need to be prerpade and work with that 
+Design reference for this task is in ./design:
+
+- design/Флора - экраны.dc.html — open in a browser (double-click or `open`).
+  8 screens covering the whole task: catalog, product card, cart, checkout,
+  admin login, admin product list, admin product form, and mobile catalog +
+  product. Each screen is annotated with the exact backend endpoint it maps
+  to (e.g. "GET /api/v1/public/products?skip=0&limit=12").
+- design/_ds/nocturne-.../ — the design system itself: styles.css (the
+  actual tokens: colors, type, spacing, radius, shadow, all as CSS custom
+  properties) and readme.md (how to use it, component classes, do/don't).
+
+Match this design when building the frontend: same tokens, same components,
+same screens. See PLAN.md for the task breakdown.

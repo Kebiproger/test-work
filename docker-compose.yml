@@ -39,7 +39,11 @@ services:
     build: ./frontend
     container_name: flower_frontend
     ports:
-    - "127.0.0.7:80:80"
+    # Was 127.0.0.7:80 — that loopback alias isn't bound by default on
+    # macOS (only 127.0.0.1 is), so the site was unreachable at the
+    # http://localhost the README promises. 127.0.0.1 matches the README
+    # and the other services' bindings.
+    - "127.0.0.1:80:80"
     volumes:
     - media_files:/usr/share/nginx/html/media:ro
     depends_on:

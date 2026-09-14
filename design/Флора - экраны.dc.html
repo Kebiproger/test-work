@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/nocturne-e48576fc-02cc-4ba8-85f3-ec42b72fe136/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  .ph-photo {
+    display: grid; place-items: center; align-content: center; gap: 6px; text-align: center;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 7px, color-mix(in srgb, var(--color-text) 4%, transparent) 7px 8px),
+      var(--color-neutral-900);
+    color: color-mix(in srgb, var(--color-text) 42%, transparent);
+    font-size: 11px; letter-spacing: 0.04em;
+  }
+  .screen { background: var(--color-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;gap:64px;padding:56px 48px 112px;align-items:flex-start">
+
+  <header style="display:flex;flex-direction:column;gap:var(--space-3);max-width:760px">
+    <h6 style="margin:0;color:var(--color-accent-300)">Флора · Flower Shop API v1</h6>
+    <h1 style="margin:0">Витрина и админка</h1>
+    <p style="margin:0;font-size:15px;text-wrap:pretty" class="text-muted">Восемь экранов на контракте бэкенда: товар — это название, описание, цена, остаток, тип <span class="mono" style="font-size:13px;color:var(--color-neutral-300)">FLOWER</span> или <span class="mono" style="font-size:13px;color:var(--color-neutral-300)">BOUQUET</span>, картинка и признак активности. Публичная витрина отдаёт только активные позиции, админка ходит с заголовком <span class="mono" style="font-size:13px;color:var(--color-neutral-300)">X-API-Key</span>. Прямоугольники со штриховкой — места под фотографии.</p>
+    <hr class="hr" style="width:760px;margin:var(--space-2) 0 0">
+  </header>
+
+  <section data-screen-label="01 Витрина" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">01 — Витрина</h6>
+      <h3 style="margin:0">Каталог</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">GET /api/v1/public/products?skip=0&amp;limit=12</p>
+    </div>
+
+    <div class="screen" style="width:1280px">
+      <nav class="nav" style="padding:var(--space-3) var(--space-8)">
+        <span class="nav-brand" style="display:inline-flex;align-items:center;gap:var(--space-3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <a href="#s01" aria-current="page">Каталог</a>
+        <a href="#s02">Букеты</a>
+        <a href="#s02">Цветы</a>
+        <a href="#s04">Доставка</a>
+        <button class="btn btn-icon btn-secondary" aria-label="Поиск"><i class="ph ph-magnifying-glass" style="font-size:17px"></i></button>
+        <a href="#s03" class="btn btn-primary"><i class="ph ph-shopping-bag" style="font-size:16px"></i>Корзина · 3</a>
+      </nav>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--space-8);align-items:end;padding:48px var(--space-8) var(--space-8)">
+        <div style="display:flex;flex-direction:column;gap:var(--space-3);max-width:560px">
+          <h6 style="margin:0;color:var(--color-accent-300)">Срез сегодняшнего утра</h6>
+          <h1 style="margin:0;text-wrap:pretty">Цветы, собранные в день доставки</h1>
+          <p class="text-muted" style="margin:0;text-wrap:pretty">Поштучно и в букетах. Наличие обновляется со склада — если позиции нет, вы её здесь не увидите.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-muted">В наличии сегодня</span><span>64 позиции</span></div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-muted">Ближайшая доставка</span><span>сегодня, 16:00</span></div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span class="text-muted">Самовывоз</span><span>Покровка, 12</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:var(--space-4);padding:0 var(--space-8) var(--space-6)">
+        <label class="seg" style="margin:0">
+          <span class="seg-opt"><input type="radio" name="f-type" checked="checked">Все 64</span>
+          <span class="seg-opt"><input type="radio" name="f-type">Цветы 41</span>
+          <span class="seg-opt"><input type="radio" name="f-type">Букеты 23</span>
+        </label>
+        <div style="position:relative;width:260px">
+          <i class="ph ph-magnifying-glass" style="position:absolute;left:10px;top:9px;font-size:16px;color:var(--color-neutral-500)"></i>
+          <input class="input" type="search" placeholder="Поиск по названию" style="padding-left:32px">
+        </div>
+        <span class="text-muted" style="margin-left:auto;font-size:13px">Сортировка</span>
+        <select class="input" style="width:180px"><option>Сначала недорогие</option><option>Сначала дорогие</option><option>Новые поступления</option></select>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-4);padding:0 var(--space-8) var(--space-8)">
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Букет</span>
+          <span class="card-title">Пионы «Сара Бернар»</span>
+          <p class="card-body">Пять пионов, эвкалипт, крафт</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">4 900 ₽</span>
+            <span class="card-meta">осталось 4</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Цветок</span>
+          <span class="card-title">Ранункулюс белый</span>
+          <p class="card-body">Срез, стебель 45 см</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">290 ₽</span>
+            <span class="card-meta">осталось 38</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Букет</span>
+          <span class="card-title">Тюльпаны, 25 шт.</span>
+          <p class="card-body">Моносорт, лента, без упаковки</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">3 200 ₽</span>
+            <span class="card-meta" style="color:var(--color-accent-300)">осталось 2</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Цветок</span>
+          <span class="card-title">Гортензия синяя</span>
+          <p class="card-body">Крупная шапка, стебель 60 см</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">850 ₽</span>
+            <span class="card-meta">осталось 12</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Букет</span>
+          <span class="card-title">Сухоцветы «Ноктюрн»</span>
+          <p class="card-body">Лагурус, пампас, стойкий</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">2 400 ₽</span>
+            <span class="card-meta">осталось 9</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Цветок</span>
+          <span class="card-title">Роза «Фридом», 60 см</span>
+          <p class="card-body">Эквадор, бутон 5 см</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">320 ₽</span>
+            <span class="card-meta">осталось 120</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker">Букет</span>
+          <span class="card-title">Сборный «Утро»</span>
+          <p class="card-body">Матиола, фрезия, статица</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">3 750 ₽</span>
+            <span class="card-meta">осталось 6</span>
+          </div>
+          <button class="btn btn-primary btn-block">В корзину</button>
+        </article>
+
+        <article class="card elev-sm" style="opacity:0.55">
+          <div class="ph-photo" style="height:200px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:22px"></i>фото 4:5</div>
+          <span class="card-kicker" style="color:var(--color-neutral-500)">Цветок</span>
+          <span class="card-title">Эустома розовая</span>
+          <p class="card-body">Ждём поставку в четверг</p>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2)">
+            <span style="font-size:18px">410 ₽</span>
+            <span class="card-meta">нет в наличии</span>
+          </div>
+          <button class="btn btn-secondary btn-block" disabled="disabled">Нет в наличии</button>
+        </article>
+
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-3);padding:0 var(--space-8) 40px">
+        <button class="btn btn-secondary">Показать ещё 12</button>
+        <span class="text-muted" style="font-size:12px">Показано 12 из 64</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="02 Карточка товара" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">02 — Карточка товара</h6>
+      <h3 style="margin:0">Пионы «Сара Бернар»</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">GET /api/v1/public/products/{id}</p>
+    </div>
+
+    <div class="screen" style="width:1280px">
+      <nav class="nav" style="padding:var(--space-3) var(--space-8)">
+        <span class="nav-brand" style="display:inline-flex;align-items:center;gap:var(--space-3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <a href="#">Каталог</a>
+        <a href="#" aria-current="page">Букеты</a>
+        <a href="#">Цветы</a>
+        <a href="#">Доставка</a>
+        <button class="btn btn-icon btn-secondary" aria-label="Поиск"><i class="ph ph-magnifying-glass" style="font-size:17px"></i></button>
+        <span class="btn btn-primary"><i class="ph ph-shopping-bag" style="font-size:16px"></i>Корзина · 3</span>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-6) var(--space-8) 0;font-size:12px" class="text-muted">
+        <a href="#">Каталог</a><i class="ph ph-caret-right" style="font-size:11px"></i><a href="#">Букеты</a><i class="ph ph-caret-right" style="font-size:11px"></i><span>Пионы «Сара Бернар»</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:40px;padding:var(--space-6) var(--space-8) 40px">
+        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+          <div class="ph-photo" style="height:480px;border-radius:var(--radius-md)"><i class="ph ph-image" style="font-size:28px"></i>главное фото · 4:5 · съёмка на тёмном фоне</div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-3)">
+            <div class="ph-photo" style="height:96px;border-radius:var(--radius-sm);box-shadow:inset 0 0 0 1px var(--color-accent)"><i class="ph ph-image" style="font-size:16px"></i></div>
+            <div class="ph-photo" style="height:96px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+            <div class="ph-photo" style="height:96px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+            <div class="ph-photo" style="height:96px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <div style="display:flex;gap:var(--space-2)">
+            <span class="tag tag-accent">Букет</span>
+            <span class="tag tag-neutral">Сезон: май — июль</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <h2 style="margin:0">Пионы «Сара Бернар»</h2>
+            <p class="text-muted" style="margin:0;text-wrap:pretty">Пять пионов сорта Sarah Bernhardt, ветка эвкалипта, крафтовая упаковка и лента. Собираем в день доставки, стебли подрезаны под воду.</p>
+          </div>
+
+          <hr class="hr" style="margin:0">
+
+          <div style="display:flex;align-items:baseline;gap:var(--space-4)">
+            <span style="font-size:32px;font-family:var(--font-heading);font-weight:500;letter-spacing:-0.015em">4 900 ₽</span>
+            <span class="text-muted" style="font-size:13px">осталось 4 шт.</span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:var(--space-4)">
+            <div style="display:inline-flex;align-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+              <button class="btn" style="width:36px;height:36px;padding:0;border-radius:0" aria-label="Уменьшить"><i class="ph ph-minus"></i></button>
+              <span style="width:44px;text-align:center;font-size:14px;line-height:36px;border-left:1px solid var(--color-divider);border-right:1px solid var(--color-divider)">1</span>
+              <button class="btn" style="width:36px;height:36px;padding:0;border-radius:0" aria-label="Увеличить"><i class="ph ph-plus"></i></button>
+            </div>
+            <button class="btn btn-primary" style="flex:1"><i class="ph ph-shopping-bag" style="font-size:16px"></i>Добавить в корзину</button>
+          </div>
+          <p class="text-muted" style="margin:0;font-size:12px">Больше 4 шт. добавить нельзя — ограничение по остатку на складе.</p>
+
+          <hr class="hr" style="margin:0">
+
+          <dl style="margin:0;display:grid;grid-template-columns:140px minmax(0,1fr);row-gap:var(--space-3);column-gap:var(--space-4);font-size:14px">
+            <dt class="text-muted">Состав</dt><dd style="margin:0">Пион — 5, эвкалипт — 1</dd>
+            <dt class="text-muted">Высота</dt><dd style="margin:0">45–50 см</dd>
+            <dt class="text-muted">Стойкость</dt><dd style="margin:0">5–7 дней</dd>
+            <dt class="text-muted">Доставка</dt><dd style="margin:0">Сегодня с 16:00, бесплатно от 3 000 ₽</dd>
+            <dt class="text-muted">Артикул</dt><dd style="margin:0" class="mono">FL-0142</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="03 Корзина" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">03 — Корзина</h6>
+      <h3 style="margin:0">Корзина</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">состояние на клиенте · остатки перепроверяются перед оформлением</p>
+    </div>
+
+    <div class="screen" style="width:1280px">
+      <nav class="nav" style="padding:var(--space-3) var(--space-8)">
+        <span class="nav-brand" style="display:inline-flex;align-items:center;gap:var(--space-3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <a href="#">Каталог</a>
+        <a href="#">Букеты</a>
+        <a href="#">Цветы</a>
+        <a href="#">Доставка</a>
+        <span class="btn btn-primary"><i class="ph ph-shopping-bag" style="font-size:16px"></i>Корзина · 3</span>
+      </nav>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;padding:40px var(--space-8)">
+        <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+          <h2 style="margin:0">Корзина</h2>
+
+          <div style="display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:88px minmax(0,1fr) 116px 110px 36px;gap:var(--space-4);align-items:center;padding:var(--space-4) 0;border-bottom:1px solid var(--color-divider)">
+              <div class="ph-photo" style="height:88px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+                <span style="font-size:16px">Пионы «Сара Бернар»</span>
+                <span class="text-muted" style="font-size:12px">Букет · 4 900 ₽ за шт.</span>
+              </div>
+              <div style="display:inline-flex;align-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;justify-self:start">
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Уменьшить"><i class="ph ph-minus" style="font-size:13px"></i></button>
+                <span style="width:34px;text-align:center;font-size:14px;line-height:32px;border-left:1px solid var(--color-divider);border-right:1px solid var(--color-divider)">1</span>
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Увеличить"><i class="ph ph-plus" style="font-size:13px"></i></button>
+              </div>
+              <span style="font-size:16px;text-align:right">4 900 ₽</span>
+              <button class="btn btn-icon" aria-label="Удалить" style="color:var(--color-neutral-500)"><i class="ph ph-x" style="font-size:15px"></i></button>
+            </div>
+
+            <div style="display:grid;grid-template-columns:88px minmax(0,1fr) 116px 110px 36px;gap:var(--space-4);align-items:center;padding:var(--space-4) 0;border-bottom:1px solid var(--color-divider)">
+              <div class="ph-photo" style="height:88px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+                <span style="font-size:16px">Ранункулюс белый</span>
+                <span class="text-muted" style="font-size:12px">Цветок · 290 ₽ за шт.</span>
+              </div>
+              <div style="display:inline-flex;align-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;justify-self:start">
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Уменьшить"><i class="ph ph-minus" style="font-size:13px"></i></button>
+                <span style="width:34px;text-align:center;font-size:14px;line-height:32px;border-left:1px solid var(--color-divider);border-right:1px solid var(--color-divider)">9</span>
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Увеличить"><i class="ph ph-plus" style="font-size:13px"></i></button>
+              </div>
+              <span style="font-size:16px;text-align:right">2 610 ₽</span>
+              <button class="btn btn-icon" aria-label="Удалить" style="color:var(--color-neutral-500)"><i class="ph ph-x" style="font-size:15px"></i></button>
+            </div>
+
+            <div style="display:grid;grid-template-columns:88px minmax(0,1fr) 116px 110px 36px;gap:var(--space-4);align-items:center;padding:var(--space-4) 0;border-bottom:1px solid var(--color-divider)">
+              <div class="ph-photo" style="height:88px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:16px"></i></div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+                <span style="font-size:16px">Тюльпаны, 25 шт.</span>
+                <span style="font-size:12px;color:var(--color-accent-300)">Осталось 2 — количество уменьшено с 3</span>
+              </div>
+              <div style="display:inline-flex;align-items:center;border:1px solid var(--color-accent);border-radius:var(--radius-md);overflow:hidden;justify-self:start">
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Уменьшить"><i class="ph ph-minus" style="font-size:13px"></i></button>
+                <span style="width:34px;text-align:center;font-size:14px;line-height:32px;border-left:1px solid var(--color-divider);border-right:1px solid var(--color-divider)">2</span>
+                <button class="btn" style="width:32px;height:32px;padding:0;border-radius:0" aria-label="Увеличить" disabled="disabled"><i class="ph ph-plus" style="font-size:13px"></i></button>
+              </div>
+              <span style="font-size:16px;text-align:right">6 400 ₽</span>
+              <button class="btn btn-icon" aria-label="Удалить" style="color:var(--color-neutral-500)"><i class="ph ph-x" style="font-size:15px"></i></button>
+            </div>
+          </div>
+
+          <a href="#" class="btn btn-ghost" style="align-self:flex-start"><i class="ph ph-arrow-left" style="font-size:15px"></i>Вернуться в каталог</a>
+        </div>
+
+        <aside class="card elev-sm" style="padding:var(--space-6);gap:var(--space-4);align-self:start">
+          <h4 style="margin:0">Итого</h4>
+          <div style="display:flex;flex-direction:column;gap:var(--space-3);font-size:14px">
+            <div style="display:flex;justify-content:space-between"><span class="text-muted">3 позиции, 12 шт.</span><span>13 910 ₽</span></div>
+            <div style="display:flex;justify-content:space-between"><span class="text-muted">Доставка по городу</span><span>0 ₽</span></div>
+            <div style="height:1px;background:var(--color-divider)"></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span>К оплате</span><span style="font-size:25px;font-family:var(--font-heading);font-weight:500;letter-spacing:-0.015em">13 910 ₽</span></div>
+          </div>
+          <button class="btn btn-primary btn-block">Оформить заказ</button>
+          <p class="text-muted" style="margin:0;font-size:12px">Наличие подтверждается при оформлении. Если позиция закончится, мы уменьшим количество и покажем это до оплаты.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="04 Оформление заказа" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">04 — Оформление</h6>
+      <h3 style="margin:0">Доставка и оплата</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">эндпоинта заказа в API пока нет — форма собирает данные под будущий POST /orders</p>
+    </div>
+
+    <div class="screen" style="width:1280px">
+      <nav class="nav" style="padding:var(--space-3) var(--space-8)">
+        <span class="nav-brand" style="display:inline-flex;align-items:center;gap:var(--space-3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <span class="text-muted" style="font-size:13px">Шаг 2 из 2 · Оформление</span>
+      </nav>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;padding:40px var(--space-8)">
+        <div style="display:flex;flex-direction:column;gap:var(--space-8);max-width:620px">
+          <h2 style="margin:0">Оформление заказа</h2>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <h5 style="margin:0">Получатель</h5>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)">
+              <div class="field"><label for="c-name">Имя и фамилия</label><input class="input" id="c-name" value="Анна Мирошина"></div>
+              <div class="field"><label for="c-phone">Телефон</label><input class="input" id="c-phone" value="+7 903 214-86-40"></div>
+              <div class="field" style="grid-column:1 / -1"><label for="c-mail">Email для чека</label><input class="input" id="c-mail" type="email" placeholder="anna@example.com"></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <h5 style="margin:0">Способ получения</h5>
+            <label class="seg" style="margin:0">
+              <span class="seg-opt"><input type="radio" name="ship" checked="checked"><i class="ph ph-scooter" style="font-size:15px"></i>Доставка курьером</span>
+              <span class="seg-opt"><input type="radio" name="ship"><i class="ph ph-storefront" style="font-size:15px"></i>Самовывоз, Покровка 12</span>
+            </label>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-4)">
+              <div class="field" style="grid-column:1 / 3"><label for="c-addr">Адрес</label><input class="input" id="c-addr" value="Чистопрудный бул., 14, кв. 7"></div>
+              <div class="field"><label for="c-date">Дата</label><input class="input" id="c-date" value="15 сентября"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+              <span class="field" style="font-size:12px;color:color-mix(in srgb, var(--color-text) 70%, transparent)">Интервал</span>
+              <div style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+                <label class="seg" style="margin:0">
+                  <span class="seg-opt"><input type="radio" name="slot">10:00 — 13:00</span>
+                  <span class="seg-opt"><input type="radio" name="slot" checked="checked">16:00 — 19:00</span>
+                  <span class="seg-opt"><input type="radio" name="slot">19:00 — 22:00</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <h5 style="margin:0">Открытка и пожелания</h5>
+            <div class="field"><label for="c-note">Текст открытки — до 200 символов</label><textarea class="input" id="c-note" placeholder="С днём рождения. Пусть утро будет тихим."></textarea></div>
+            <label class="radio"><input type="checkbox"><span class="dot"></span>Не звонить получателю — сюрприз</label>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+            <h5 style="margin:0">Оплата</h5>
+            <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+              <label class="radio"><input type="radio" name="pay" checked="checked"><span class="dot"></span>Картой онлайн</label>
+              <label class="radio"><input type="radio" name="pay"><span class="dot"></span>СБП по QR-коду</label>
+              <label class="radio"><input type="radio" name="pay"><span class="dot"></span>Курьеру при получении</label>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card elev-sm" style="padding:var(--space-6);gap:var(--space-4);align-self:start">
+          <h4 style="margin:0">Ваш заказ</h4>
+          <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+            <div style="display:flex;gap:var(--space-3);align-items:center">
+              <div class="ph-photo" style="width:44px;height:44px;border-radius:var(--radius-sm);flex:none"><i class="ph ph-image" style="font-size:14px"></i></div>
+              <span style="font-size:13px;flex:1">Пионы «Сара Бернар» × 1</span>
+              <span style="font-size:13px">4 900 ₽</span>
+            </div>
+            <div style="display:flex;gap:var(--space-3);align-items:center">
+              <div class="ph-photo" style="width:44px;height:44px;border-radius:var(--radius-sm);flex:none"><i class="ph ph-image" style="font-size:14px"></i></div>
+              <span style="font-size:13px;flex:1">Ранункулюс белый × 9</span>
+              <span style="font-size:13px">2 610 ₽</span>
+            </div>
+            <div style="display:flex;gap:var(--space-3);align-items:center">
+              <div class="ph-photo" style="width:44px;height:44px;border-radius:var(--radius-sm);flex:none"><i class="ph ph-image" style="font-size:14px"></i></div>
+              <span style="font-size:13px;flex:1">Тюльпаны, 25 шт. × 2</span>
+              <span style="font-size:13px">6 400 ₽</span>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2);font-size:14px">
+            <div style="display:flex;justify-content:space-between"><span class="text-muted">Товары</span><span>13 910 ₽</span></div>
+            <div style="display:flex;justify-content:space-between"><span class="text-muted">Доставка 16:00 — 19:00</span><span>0 ₽</span></div>
+          </div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span>К оплате</span><span style="font-size:25px;font-family:var(--font-heading);font-weight:500;letter-spacing:-0.015em">13 910 ₽</span></div>
+          <button class="btn btn-primary btn-block">Оплатить 13 910 ₽</button>
+          <p class="text-muted" style="margin:0;font-size:12px">Нажимая «Оплатить», вы соглашаетесь с условиями доставки и обработкой персональных данных.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="05 Вход в админку" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">05 — Админка</h6>
+      <h3 style="margin:0">Вход по API-ключу</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">X-API-Key · проверяется запросом GET /api/v1/admin/products?limit=1</p>
+    </div>
+
+    <div class="screen" style="width:1280px;height:560px;position:relative;display:grid;place-items:center">
+      <div style="position:absolute;inset:0;background:radial-gradient(120% 90% at 18% 0%, var(--color-accent-900) 0%, transparent 62%)"></div>
+      <div style="position:relative;width:380px;display:flex;flex-direction:column;gap:var(--space-6)">
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <span style="display:inline-flex;align-items:center;gap:var(--space-3);font-family:var(--font-heading);font-weight:500;font-size:18px"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+          <h3 style="margin:0">Панель управления</h3>
+          <p class="text-muted" style="margin:0;font-size:13px">Ключ хранится только в этой сессии браузера и уходит в заголовке каждого запроса.</p>
+        </div>
+        <div class="card elev-md" style="padding:var(--space-6);gap:var(--space-4)">
+          <div class="field">
+            <label for="a-key">API-ключ</label>
+            <div style="position:relative">
+              <input class="input mono" id="a-key" type="password" value="sk_live_8f2c41d9a7be" style="padding-right:38px">
+              <button class="btn btn-icon" aria-label="Показать ключ" style="position:absolute;right:0;top:0;height:36px;width:36px;color:var(--color-neutral-500)"><i class="ph ph-eye" style="font-size:15px"></i></button>
+            </div>
+          </div>
+          <label class="radio"><input type="checkbox" checked="checked"><span class="dot"></span>Запомнить до закрытия вкладки</label>
+          <button class="btn btn-primary btn-block">Войти</button>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--color-accent-700);border-radius:var(--radius-md);background:var(--color-accent-900)">
+          <i class="ph ph-warning-circle" style="font-size:16px;color:var(--color-accent-300);margin-top:2px"></i>
+          <span style="font-size:13px;color:var(--color-accent-200)">Ключ неверный — сервер ответил 403. Проверьте значение <span class="mono">ADMIN_API_KEY</span> в окружении бэкенда.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="06 Админка: товары" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">06 — Админка</h6>
+      <h3 style="margin:0">Список товаров</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">GET /api/v1/admin/products — видны и неактивные позиции</p>
+    </div>
+
+    <div class="screen" style="width:1280px;display:grid;grid-template-columns:216px minmax(0,1fr)">
+      <aside style="display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-4);background:var(--color-neutral-900)">
+        <span style="display:inline-flex;align-items:center;gap:var(--space-3);font-family:var(--font-heading);font-weight:500;font-size:18px;padding:var(--space-2)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <nav style="display:flex;flex-direction:column;gap:var(--space-1)">
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-accent);box-shadow:inset 0 0 0 1px var(--color-accent)"><i class="ph ph-flower-tulip" style="font-size:16px"></i>Товары</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-receipt" style="font-size:16px"></i>Заказы</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-image-square" style="font-size:16px"></i>Медиа</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-gear" style="font-size:16px"></i>Настройки</a>
+        </nav>
+        <div style="margin-top:auto;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-3);border-radius:var(--radius-md);background:var(--color-bg)">
+          <span class="text-muted" style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Ключ активен</span>
+          <span class="mono" style="font-size:12px">sk_live_••••7be</span>
+          <button class="btn btn-ghost" style="align-self:flex-start;font-size:13px">Выйти</button>
+        </div>
+      </aside>
+
+      <div style="display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-8)">
+        <div style="display:flex;align-items:flex-end;gap:var(--space-4)">
+          <div style="display:flex;flex-direction:column;gap:var(--space-1);margin-right:auto">
+            <h3 style="margin:0">Товары</h3>
+            <span class="text-muted" style="font-size:13px">64 позиции · 8 скрыто с витрины</span>
+          </div>
+          <button class="btn btn-secondary"><i class="ph ph-upload-simple" style="font-size:15px"></i>Импорт CSV</button>
+          <button class="btn btn-primary"><i class="ph ph-plus" style="font-size:15px"></i>Новый товар</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:var(--space-4)">
+          <div style="position:relative;width:260px">
+            <i class="ph ph-magnifying-glass" style="position:absolute;left:10px;top:9px;font-size:16px;color:var(--color-neutral-500)"></i>
+            <input class="input" type="search" placeholder="Название или артикул" style="padding-left:32px">
+          </div>
+          <label class="seg" style="margin:0">
+            <span class="seg-opt"><input type="radio" name="a-filter" checked="checked">Все</span>
+            <span class="seg-opt"><input type="radio" name="a-filter">Активные</span>
+            <span class="seg-opt"><input type="radio" name="a-filter">Скрытые</span>
+            <span class="seg-opt"><input type="radio" name="a-filter">Нет в наличии</span>
+          </label>
+          <select class="input" style="width:150px;margin-left:auto"><option>Все типы</option><option>FLOWER</option><option>BOUQUET</option></select>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:52px"></th>
+              <th>Название</th>
+              <th style="width:104px">Тип</th>
+              <th style="width:104px;text-align:right">Цена</th>
+              <th style="width:96px;text-align:right">Остаток</th>
+              <th style="width:116px">Статус</th>
+              <th style="width:88px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Пионы «Сара Бернар»</span><span class="mono text-muted" style="font-size:11px">FL-0142</span></div></td>
+              <td><span class="tag tag-accent">BOUQUET</span></td>
+              <td style="text-align:right">4 900 ₽</td>
+              <td style="text-align:right">4</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Активен</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Ранункулюс белый</span><span class="mono text-muted" style="font-size:11px">FL-0087</span></div></td>
+              <td><span class="tag tag-neutral">FLOWER</span></td>
+              <td style="text-align:right">290 ₽</td>
+              <td style="text-align:right">38</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Активен</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Тюльпаны, 25 шт.</span><span class="mono text-muted" style="font-size:11px">FL-0119</span></div></td>
+              <td><span class="tag tag-accent">BOUQUET</span></td>
+              <td style="text-align:right">3 200 ₽</td>
+              <td style="text-align:right;color:var(--color-accent-300)">2</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Активен</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Гортензия синяя</span><span class="mono text-muted" style="font-size:11px">FL-0061</span></div></td>
+              <td><span class="tag tag-neutral">FLOWER</span></td>
+              <td style="text-align:right">850 ₽</td>
+              <td style="text-align:right">12</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Активен</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+            <tr style="opacity:0.6">
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Эустома розовая</span><span class="mono text-muted" style="font-size:11px">FL-0033</span></div></td>
+              <td><span class="tag tag-neutral">FLOWER</span></td>
+              <td style="text-align:right">410 ₽</td>
+              <td style="text-align:right">0</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-neutral-600)"></span>Скрыт</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><div class="ph-photo" style="width:40px;height:40px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:13px"></i></div></td>
+              <td><div style="display:flex;flex-direction:column"><span>Сухоцветы «Ноктюрн»</span><span class="mono text-muted" style="font-size:11px">FL-0150</span></div></td>
+              <td><span class="tag tag-accent">BOUQUET</span></td>
+              <td style="text-align:right">2 400 ₽</td>
+              <td style="text-align:right">9</td>
+              <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Активен</span></td>
+              <td><div style="display:flex;gap:2px;justify-content:flex-end"><button class="btn btn-icon" aria-label="Изменить"><i class="ph ph-pencil-simple" style="font-size:15px"></i></button><button class="btn btn-icon" aria-label="Ещё"><i class="ph ph-dots-three" style="font-size:15px"></i></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display:flex;align-items:center;gap:var(--space-4)">
+          <span class="text-muted" style="font-size:13px">Страница 1 · показано 6 из 64</span>
+          <div style="margin-left:auto;display:flex;gap:var(--space-2)">
+            <button class="btn btn-secondary" disabled="disabled"><i class="ph ph-arrow-left" style="font-size:14px"></i>Назад</button>
+            <button class="btn btn-secondary">Дальше<i class="ph ph-arrow-right" style="font-size:14px"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="07 Админка: форма товара" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">07 — Админка</h6>
+      <h3 style="margin:0">Форма товара</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">PATCH /api/v1/admin/products/{id} · POST /api/v1/admin/products/{id}/image</p>
+    </div>
+
+    <div class="screen" style="width:1280px;display:grid;grid-template-columns:216px minmax(0,1fr)">
+      <aside style="display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-4);background:var(--color-neutral-900)">
+        <span style="display:inline-flex;align-items:center;gap:var(--space-3);font-family:var(--font-heading);font-weight:500;font-size:18px;padding:var(--space-2)"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+        <nav style="display:flex;flex-direction:column;gap:var(--space-1)">
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-accent);box-shadow:inset 0 0 0 1px var(--color-accent)"><i class="ph ph-flower-tulip" style="font-size:16px"></i>Товары</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-receipt" style="font-size:16px"></i>Заказы</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-image-square" style="font-size:16px"></i>Медиа</a>
+          <a href="#" style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:14px;color:var(--color-text)"><i class="ph ph-gear" style="font-size:16px"></i>Настройки</a>
+        </nav>
+      </aside>
+
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--color-divider)">
+          <a href="#" class="btn btn-ghost" style="font-size:13px"><i class="ph ph-arrow-left" style="font-size:14px"></i>К списку</a>
+          <span class="text-muted" style="font-size:13px;margin-right:auto">Черновик сохранён 2 минуты назад</span>
+          <button class="btn btn-secondary">Отмена</button>
+          <button class="btn btn-primary">Сохранить</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:40px;padding:var(--space-8)">
+          <div style="display:flex;flex-direction:column;gap:var(--space-8);max-width:620px">
+            <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+              <h3 style="margin:0">Пионы «Сара Бернар»</h3>
+              <span class="mono text-muted" style="font-size:12px">id 142 · создан 12.05.2026</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+              <h5 style="margin:0">Основное</h5>
+              <div class="field"><label for="p-name">Название</label><input class="input" id="p-name" value="Пионы «Сара Бернар»"></div>
+              <div class="field"><label for="p-desc">Описание</label><textarea class="input" id="p-desc">Пять пионов сорта Sarah Bernhardt, ветка эвкалипта, крафтовая упаковка и лента. Собираем в день доставки.</textarea></div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+                <span style="font-size:12px;color:color-mix(in srgb, var(--color-text) 70%, transparent)">Тип товара</span>
+                <label class="seg" style="margin:0">
+                  <span class="seg-opt"><input type="radio" name="p-type">FLOWER — поштучно</span>
+                  <span class="seg-opt"><input type="radio" name="p-type" checked="checked">BOUQUET — букет</span>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+              <h5 style="margin:0">Цена и склад</h5>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)">
+                <div class="field"><label for="p-price">Цена, ₽</label><input class="input" id="p-price" type="number" value="4900"></div>
+                <div class="field"><label for="p-stock">Остаток, шт.</label><input class="input" id="p-stock" type="number" value="4"></div>
+              </div>
+              <p class="text-muted" style="margin:0;font-size:12px">Цена — два знака после запятой, остаток — целое неотрицательное число. При нуле товар остаётся в базе, но исчезает с витрины.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+              <h5 style="margin:0">Фотография</h5>
+              <div style="display:flex;gap:var(--space-4);align-items:stretch">
+                <div class="ph-photo" style="width:180px;height:180px;border-radius:var(--radius-md);flex:none"><i class="ph ph-image" style="font-size:22px"></i>текущее фото</div>
+                <div style="flex:1;display:grid;place-items:center;gap:var(--space-3);padding:var(--space-6);border:1px dashed var(--color-neutral-700);border-radius:var(--radius-md);text-align:center">
+                  <i class="ph ph-upload-simple" style="font-size:22px;color:var(--color-accent)"></i>
+                  <span style="font-size:13px">Перетащите файл или <span style="color:var(--color-accent)">выберите на диске</span></span>
+                  <span class="text-muted" style="font-size:12px">JPG или PNG, до 5 МБ. Снимайте на тёмном фоне — витрина смешивает фото с подложкой.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside style="display:flex;flex-direction:column;gap:var(--space-6);align-self:start">
+            <div class="card elev-sm" style="padding:var(--space-4);gap:var(--space-3)">
+              <span class="card-kicker">Видимость</span>
+              <label class="radio" style="justify-content:space-between;width:100%"><span>Активен на витрине</span><input type="checkbox" checked="checked"><span class="dot"></span></label>
+              <p class="text-muted" style="margin:0;font-size:12px">Неактивные товары не отдаются публичным API, но остаются в админке и в истории заказов.</p>
+            </div>
+
+            <div class="card elev-sm" style="padding:var(--space-4);gap:var(--space-3)">
+              <span class="card-kicker">Предпросмотр карточки</span>
+              <div class="ph-photo" style="height:132px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:18px"></i></div>
+              <span class="card-title" style="font-size:15px">Пионы «Сара Бернар»</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:16px">4 900 ₽</span><span class="card-meta">осталось 4</span></div>
+            </div>
+
+            <div class="card elev-sm" style="padding:var(--space-4);gap:var(--space-2)">
+              <span class="card-kicker">История</span>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span class="text-muted">Цена 4 500 → 4 900</span><span class="text-muted">3 дн. назад</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span class="text-muted">Остаток 9 → 4</span><span class="text-muted">сегодня</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="08 Мобильный: каталог и карточка" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+      <h6 style="margin:0;color:var(--color-accent-300)">08 — Мобильный</h6>
+      <h3 style="margin:0">Каталог и карточка товара</h3>
+      <p class="mono text-muted" style="margin:0;font-size:11px">390 × 844 · зона нажатия не меньше 44px</p>
+    </div>
+
+    <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+
+      <div class="screen" style="width:390px;height:844px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+          <span style="display:inline-flex;align-items:center;gap:var(--space-2);font-family:var(--font-heading);font-weight:500;font-size:17px;margin-right:auto"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Флора</span>
+          <button class="btn btn-icon btn-secondary" aria-label="Поиск" style="width:44px;height:44px"><i class="ph ph-magnifying-glass" style="font-size:18px"></i></button>
+          <button class="btn btn-icon btn-primary" aria-label="Корзина" style="width:44px;height:44px"><i class="ph ph-shopping-bag" style="font-size:18px"></i></button>
+        </div>
+
+        <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:var(--space-4);padding:var(--space-6) var(--space-4)">
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <h6 style="margin:0;color:var(--color-accent-300)">Срез сегодняшнего утра</h6>
+            <h3 style="margin:0;font-size:28px;text-wrap:pretty">Цветы, собранные в день доставки</h3>
+          </div>
+
+          <label class="seg" style="margin:0;align-self:flex-start">
+            <span class="seg-opt" style="padding:10px 14px"><input type="radio" name="m-f" checked="checked">Все</span>
+            <span class="seg-opt" style="padding:10px 14px"><input type="radio" name="m-f">Цветы</span>
+            <span class="seg-opt" style="padding:10px 14px"><input type="radio" name="m-f">Букеты</span>
+          </label>
+
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3)">
+            <article class="card elev-sm" style="padding:var(--space-2);gap:var(--space-2)">
+              <div class="ph-photo" style="height:132px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:18px"></i></div>
+              <span class="card-title" style="font-size:14px">Пионы «Сара Бернар»</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px">4 900 ₽</span><span class="card-meta">4 шт.</span></div>
+              <button class="btn btn-primary btn-block" style="min-height:44px">В корзину</button>
+            </article>
+            <article class="card elev-sm" style="padding:var(--space-2);gap:var(--space-2)">
+              <div class="ph-photo" style="height:132px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:18px"></i></div>
+              <span class="card-title" style="font-size:14px">Ранункулюс белый</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px">290 ₽</span><span class="card-meta">38 шт.</span></div>
+              <button class="btn btn-primary btn-block" style="min-height:44px">В корзину</button>
+            </article>
+            <article class="card elev-sm" style="padding:var(--space-2);gap:var(--space-2)">
+              <div class="ph-photo" style="height:132px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:18px"></i></div>
+              <span class="card-title" style="font-size:14px">Тюльпаны, 25 шт.</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px">3 200 ₽</span><span class="card-meta" style="color:var(--color-accent-300)">2 шт.</span></div>
+              <button class="btn btn-primary btn-block" style="min-height:44px">В корзину</button>
+            </article>
+            <article class="card elev-sm" style="padding:var(--space-2);gap:var(--space-2)">
+              <div class="ph-photo" style="height:132px;border-radius:var(--radius-sm)"><i class="ph ph-image" style="font-size:18px"></i></div>
+              <span class="card-title" style="font-size:14px">Гортензия синяя</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px">850 ₽</span><span class="card-meta">12 шт.</span></div>
+              <button class="btn btn-primary btn-block" style="min-height:44px">В корзину</button>
+            </article>
+          </div>
+        </div>
+
+        <div style="display:flex;padding:var(--space-2) var(--space-4) var(--space-6);border-top:1px solid var(--color-divider)">
+          <a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:var(--space-2);font-size:11px;color:var(--color-accent)"><i class="ph ph-flower-tulip" style="font-size:20px"></i>Каталог</a>
+          <a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:var(--space-2);font-size:11px;color:var(--color-text)"><i class="ph ph-heart" style="font-size:20px"></i>Избранное</a>
+          <a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:var(--space-2);font-size:11px;color:var(--color-text)"><i class="ph ph-shopping-bag" style="font-size:20px"></i>Корзина</a>
+          <a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:var(--space-2);font-size:11px;color:var(--color-text)"><i class="ph ph-user" style="font-size:20px"></i>Профиль</a>
+        </div>
+      </div>
+
+      <div class="screen" style="width:390px;height:844px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4)">
+          <button class="btn btn-icon btn-secondary" aria-label="Назад" style="width:44px;height:44px"><i class="ph ph-arrow-left" style="font-size:18px"></i></button>
+          <span class="text-muted" style="font-size:13px;margin-right:auto">Букеты</span>
+          <button class="btn btn-icon btn-secondary" aria-label="В избранное" style="width:44px;height:44px"><i class="ph ph-heart" style="font-size:18px"></i></button>
+        </div>
+
+        <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:var(--space-4);padding:0 var(--space-4)">
+          <div class="ph-photo" style="height:330px;border-radius:var(--radius-md)"><i class="ph ph-image" style="font-size:24px"></i>фото 4:5</div>
+          <div style="display:flex;gap:var(--space-2);justify-content:center">
+            <span style="width:22px;height:3px;border-radius:2px;background:var(--color-accent)"></span>
+            <span style="width:22px;height:3px;border-radius:2px;background:var(--color-neutral-700)"></span>
+            <span style="width:22px;height:3px;border-radius:2px;background:var(--color-neutral-700)"></span>
+            <span style="width:22px;height:3px;border-radius:2px;background:var(--color-neutral-700)"></span>
+          </div>
+          <div style="display:flex;gap:var(--space-2)">
+            <span class="tag tag-accent">Букет</span>
+            <span class="tag tag-neutral">Сезон: май — июль</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <h3 style="margin:0;font-size:25px">Пионы «Сара Бернар»</h3>
+            <p class="text-muted" style="margin:0;font-size:14px;text-wrap:pretty">Пять пионов сорта Sarah Bernhardt, ветка эвкалипта, крафтовая упаковка и лента.</p>
+          </div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <dl style="margin:0;display:grid;grid-template-columns:110px minmax(0,1fr);row-gap:var(--space-2);font-size:13px">
+            <dt class="text-muted">Высота</dt><dd style="margin:0">45–50 см</dd>
+            <dt class="text-muted">Стойкость</dt><dd style="margin:0">5–7 дней</dd>
+            <dt class="text-muted">Доставка</dt><dd style="margin:0">Сегодня с 16:00</dd>
+          </dl>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-4) var(--space-6);border-top:1px solid var(--color-divider);background:var(--color-bg)">
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:20px;font-family:var(--font-heading);font-weight:500">4 900 ₽</span>
+            <span class="text-muted" style="font-size:11px">осталось 4 шт.</span>
+          </div>
+          <button class="btn btn-primary" style="flex:1;min-height:48px"><i class="ph ph-shopping-bag" style="font-size:17px"></i>В корзину</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>
