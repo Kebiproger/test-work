@@ -9,6 +9,25 @@ from app.db import get_db
 
 admin_router = APIRouter(prefix="/api/v1/admin", tags=["Admin (Управление)"], dependencies=[Depends(get_api_key)])
 
+@admin_router.get(
+    "/products",
+    response_model=list[schemas.ProductPublic],
+    summary="📋 Админ: Получить список всех товаров (включая скрытые)",
+)
+async def list_products_admin(
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    **Для чего эта ручка?**
+    Используется в админ-панели для управления товарами. В отличие от
+    публичной `/api/v1/public/products`, отдает **все** товары независимо
+    от `is_active`, чтобы можно было найти и снова показать скрытый товар.
+    """
+    return await services.get_products(db, skip=skip, limit=limit)
+
+
 @admin_router.post(
     "/products",
     response_model=schemas.ProductPublic,

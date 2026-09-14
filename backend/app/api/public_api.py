@@ -26,7 +26,7 @@ async def list_products(
     **Что возвращает:**
     Список объектов. У каждого есть `image_url` (ссылка на фото) и `price` (цена). Если товаров нет, вернется пустой массив `[]`.
     """
-    products = await services.get_products(db, skip=skip, limit=limit)
+    products = await services.get_public_products(db, skip=skip, limit=limit)
     return products
 
 @public_router.get(
@@ -48,7 +48,7 @@ async def read_product(
     **Ошибки:**
     Если товар с таким ID не найден, бэкенд вернет ошибку `404 Not Found`. Фронтенду нужно обработать её (например, показать страницу "Товар не найден").
     """
-    product = await services.get_product(db, product_id)
+    product = await services.get_public_product(db, product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     return product
