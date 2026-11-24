@@ -7,12 +7,22 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker compose build
+
+  deploy:
+    needs: build
+    
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkhout@4
+    - name: Подключить .env
+      run: cp ~/flower-config/.env .env
+    - name: Поднятие докера
+      run: docker compose up -d --build
