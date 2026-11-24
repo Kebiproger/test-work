@@ -68,7 +68,7 @@ jobs:
       cancel-in-progress: false
 
     steps:
-    - uses: actions/checkhout@v4
+    - uses: actions/checkout@v4
     - name: Deploy
       run: sh scripts/deploy.sh
       env:
