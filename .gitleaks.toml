@@ -1,0 +1,23 @@
+# gitleaks configuration for this repository (used by ci/scan.sh via --config).
+# It extends the default ruleset and adds ONE narrow allowlist entry.
+#
+# Why the entry exists: commit be5c08c added a Stripe-style "sk_live_" string to
+# "design/Флора - экраны.dc.html" (line 467 at that commit). The owner confirmed it is
+# a DESIGN MOCK for a UI screen, not a real key. The working-tree value has already been
+# replaced by a placeholder, but commit be5c08c is pushed and stays in history, so the
+# history scan would keep reporting it.
+#
+# The entry is deliberately narrow. condition = "AND" means it applies only when ALL of
+# these match: the full commit SHA, the path, and the rule id. Anything else is still
+# reported. Do NOT widen it (no directory globs, no rule-less or commit-less entries,
+# no short SHAs: gitleaks compares full commit hashes).
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Confirmed design mock (not a real key): stripe-access-token in be5c08c only"
+condition = "AND"
+commits = ["be5c08cc19f33ed5fce3affe7923e5eb1ecfa0a2"]
+paths = ['''^design/Флора - экраны\.dc\.html$''']
+targetRules = ["stripe-access-token"]
