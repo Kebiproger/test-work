@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build: ./backend
+    image: ${IMAGE_PREFIX}/flower-backend:${TAG:?TAG is required}
     container_name: flower_backend
     ports:
       - "127.0.0.1:8000:8000"
@@ -36,7 +36,7 @@ services:
       - db
   
   frontend:
-    build: ./frontend
+    image: ${IMAGE_PREFIX}/flower-frontend:${TAG:?TAG is required}
     container_name: flower_frontend
     ports:
     # Was 127.0.0.7:80 — that loopback alias isn't bound by default on
