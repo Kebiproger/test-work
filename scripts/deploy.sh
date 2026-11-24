@@ -13,6 +13,7 @@ esac
 
 if [ -n "${REGISTRY_TOKEN:-}" ]; then
   printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io -u "${REGISTRY_USER:?}" --password-stdin
+  trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
 fi
 
 # Держим compose-файл в DEPLOY_DIR синхронным с репозиторием (скрипт запускается из чекаута)
