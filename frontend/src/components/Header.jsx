@@ -1,4 +1,3 @@
-```jsx
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -116,4 +115,3 @@ export default function Header({ compact = false }) {
     </>
   );
 }
-```
